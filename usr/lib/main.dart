@@ -229,7 +229,7 @@ class IntroSlide extends StatelessWidget {
         const SizedBox(height: 40),
         Text('• Non si tratta più solo di vendere, ma di intrattenere e creare community.', style: Theme.of(context).textTheme.bodyLarge),
         const SizedBox(height: 20),
-        Text('• Attenzione dell\\'utente ridotta: i primi 3 secondi sono fondamentali.', style: Theme.of(context).textTheme.bodyLarge),
+        Text("• Attenzione dell'utente ridotta: i primi 3 secondi sono fondamentali.", style: Theme.of(context).textTheme.bodyLarge),
         const SizedBox(height: 20),
         Text('• Targeting avanzato: i social sanno cosa vogliamo prima di noi.', style: Theme.of(context).textTheme.bodyLarge),
         const SizedBox(height: 40),
