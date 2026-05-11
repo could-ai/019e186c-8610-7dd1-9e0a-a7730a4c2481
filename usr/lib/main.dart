@@ -2,269 +2,413 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 void main() {
-  runApp(const SlideshowApp());
+  runApp(const PresentationApp());
 }
 
-class SlideshowApp extends StatelessWidget {
-  const SlideshowApp({super.key});
+class PresentationApp extends StatelessWidget {
+  const PresentationApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Presentazione Social Media & AI',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF2563EB),
-          brightness: Brightness.light,
-        ),
-        fontFamily: 'Roboto',
-      ),
       initialRoute: '/',
       routes: {
-        '/': (context) => const SlideshowScreen(),
+        '/': (context) => const Slideshow(),
       },
+      theme: ThemeData(
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: Colors.black,
+        colorScheme: const ColorScheme.dark(
+          primary: Colors.blueAccent,
+          background: Color(0xFF1E1E2C),
+        ),
+        textTheme: const TextTheme(
+          displayLarge: TextStyle(fontSize: 56, fontWeight: FontWeight.bold, color: Colors.white),
+          displayMedium: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.white70),
+          headlineMedium: TextStyle(fontSize: 32, fontWeight: FontWeight.w600, color: Colors.white),
+          bodyLarge: TextStyle(fontSize: 24, height: 1.5, color: Colors.white70),
+        ),
+      ),
     );
   }
 }
 
-class SlideshowScreen extends StatefulWidget {
-  const SlideshowScreen({super.key});
+class Slideshow extends StatefulWidget {
+  const Slideshow({super.key});
 
   @override
-  State<SlideshowScreen> createState() => _SlideshowScreenState();
+  State<Slideshow> createState() => _SlideshowState();
 }
 
-class _SlideshowScreenState extends State<SlideshowScreen> {
+class _SlideshowState extends State<Slideshow> {
   final PageController _pageController = PageController();
+  final FocusNode _focusNode = FocusNode();
   int _currentPage = 0;
 
-  final List<SlideContent> _slides = [
-    SlideContent(
-      title: 'Pubblicità sui Social Media\ne Modelli Virtuali AI',
-      body: 'Esplorazione degli ecosistemi pubblicitari su TikTok, Instagram, YouTube, LinkedIn\ne l\'impatto dell\'Intelligenza Artificiale.',
-      type: SlideType.title,
+  final List<Widget> _slides = [
+    const TitleSlide(),
+    const IntroSlide(),
+    const PlatformSlide(
+      platform: 'Instagram',
+      description: 'Estetica, community e visual storytelling.\\nInfluencer marketing, Stories e Reels per la conversione.',
+      icon: Icons.camera_alt,
+      color: Colors.pinkAccent,
     ),
-    SlideContent(
-      title: '1. L\'Evoluzione della Pubblicità',
-      body: 'Dalla TV ai Social Media.\n\n• Interattività: L\'utente non è più uno spettatore passivo.\n• Micro-targeting: Annunci mostrati in base a interessi e comportamenti.\n• Metriche precise: ROAS, CPC, CTR al posto dei vecchi indici d\'ascolto.',
-      type: SlideType.bullet,
+    const PlatformSlide(
+      platform: 'TikTok',
+      description: 'Intrattenimento allo stato puro.\\nL\\'algoritmo di raccomandazione e l\\'UGC (User Generated Content).',
+      icon: Icons.music_note,
+      color: Colors.cyanAccent,
     ),
-    SlideContent(
-      title: '2. Come funziona l\'Ad Tech Social',
-      body: 'Il motore sotto il cofano.\n\n• Aste in tempo reale (RTB).\n• L\'importanza del Pixel e dei Cookie (verso l\'era cookieless).\n• Machine Learning: gli algoritmi decidono a chi mostrare cosa per massimizzare le conversioni.',
-      type: SlideType.bullet,
+    const PlatformSlide(
+      platform: 'YouTube',
+      description: 'Contenuti long-form e motore di ricerca.\\nApprofondimento, tutorial e fiducia a lungo termine.',
+      icon: Icons.play_circle_fill,
+      color: Colors.redAccent,
     ),
-    SlideContent(
-      title: '3. TikTok: Autenticità e Viralità',
-      body: '• Formato: Video brevi, verticali, audio-first.\n• Strategia Ad: "Don\'t make ads, make TikToks".\n• Hashtag Challenges, Branded Effects e Spark Ads.\n• Aneddoto: Il caso Ocean Spray - un video organico virale che ha superato ogni campagna a pagamento.',
-      type: SlideType.bullet,
+    const PlatformSlide(
+      platform: 'LinkedIn',
+      description: 'Il mondo del B2B.\\nPersonal branding, lead generation e networking professionale.',
+      icon: Icons.work,
+      color: Colors.blue,
     ),
-    SlideContent(
-      title: '4. Instagram: Estetica e Conversione',
-      body: '• Formato: Feed, Stories, Reels.\n• Strategia Ad: Focus sull\'impatto visivo e Influencer Marketing.\n• Shopping integrato: dal contenuto all\'acquisto in un tap.\n• Dinamica: L\'uso dei Reels per competere con TikTok sull\'attenzione veloce.',
-      type: SlideType.bullet,
-    ),
-    SlideContent(
-      title: '5. YouTube: Storytelling e Intento',
-      body: '• Formato: Video lunghi, Shorts, Bumper Ads (6s).\n• Strategia Ad: Pubblicità basata sull\'intento di ricerca (come Google Search) e brand awareness.\n• TrueView: L\'utente può saltare l\'annuncio, l\'inserzionista paga solo se l\'utente guarda.\n• Aneddoto: "Skip Ad" è diventato un elemento culturale, usato persino in campagne meta-pubblicitarie.',
-      type: SlideType.bullet,
-    ),
-    SlideContent(
-      title: '6. LinkedIn: B2B e Lead Generation',
-      body: '• Formato: Sponsored Content, InMail, Lead Gen Forms.\n• Strategia Ad: Targeting professionale (qualifica, azienda, settore).\n• Costi: Più alti rispetto agli altri social, ma ROI potenziale enorme nel B2B.\n• Approccio: Condivisione di valore, whitepaper, webinar.',
-      type: SlideType.bullet,
-    ),
-    SlideContent(
-      title: '7. L\'Impatto dell\'AI: Modelli Virtuali',
-      body: 'La nuova frontiera dell\'Influencer Marketing.\n\n• Modelli generati dall\'AI: Lil Miquela, Aitana Lopez.\n• Vantaggi: Controllo totale del brand, nessun rischio di scandali personali, operatività h24.\n• Creazione e mantenimento: Generazione di immagini tramite AI (Midjourney, Stable Diffusion) e gestione di community tramite LLM.',
-      type: SlideType.bullet,
-    ),
-    SlideContent(
-      title: '8. Aneddoti e Casi Studio AI',
-      body: '• Aitana Lopez (Spagna): Genera migliaia di euro al mese sponsorizzando brand, creata da un\'agenzia stanca degli influencer umani.\n• Sfide Etiche: Trasparenza, deepfake e aspettative irreali di bellezza.\n• Il futuro: Pubblicità iper-personalizzata generata in tempo reale per il singolo utente.',
-      type: SlideType.bullet,
-    ),
-    SlideContent(
-      title: 'Q&A e Conclusione',
-      body: 'Grazie per l\'attenzione.\n\nDomande?\n\n(Durata stimata esposizione: ~50 minuti)',
-      type: SlideType.title,
-    ),
+    const AISlide(),
+    const VirtualModelSlide(),
+    const AnecdoteSlide(),
+    const ConclusionSlide(),
   ];
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
 
   void _nextSlide() {
     if (_currentPage < _slides.length - 1) {
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
+      _pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
     }
   }
 
-  void _previousSlide() {
+  void _prevSlide() {
     if (_currentPage > 0) {
-      _pageController.previousPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
+      _pageController.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+    }
+  }
+
+  void _handleKeyEvent(KeyEvent event) {
+    if (event is KeyDownEvent) {
+      if (event.logicalKey == LogicalKeyboardKey.arrowRight || event.logicalKey == LogicalKeyboardKey.space) {
+        _nextSlide();
+      } else if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+        _prevSlide();
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    FocusScope.of(context).requestFocus(_focusNode);
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: CallbackShortcuts(
-        bindings: <ShortcutActivator, VoidCallback>{
-          const SingleActivator(LogicalKeyboardKey.arrowRight): _nextSlide,
-          const SingleActivator(LogicalKeyboardKey.space): _nextSlide,
-          const SingleActivator(LogicalKeyboardKey.arrowLeft): _previousSlide,
-        },
-        child: Focus(
-          autofocus: true,
-          child: Stack(
-            children: [
-              PageView.builder(
-                controller: _pageController,
-                onPageChanged: (index) {
-                  setState(() {
-                    _currentPage = index;
-                  });
-                },
-                itemCount: _slides.length,
-                itemBuilder: (context, index) {
-                  return SlideWidget(slide: _slides[index]);
-                },
-              ),
-              Positioned(
-                bottom: 20,
-                left: 0,
-                right: 0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back_ios),
-                      onPressed: _currentPage > 0 ? _previousSlide : null,
-                      color: _currentPage > 0 ? Colors.black54 : Colors.black12,
-                    ),
-                    Text(
-                      '${_currentPage + 1} / ${_slides.length}',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.black54,
-                        fontWeight: FontWeight.bold,
+      body: KeyboardListener(
+        focusNode: _focusNode,
+        onKeyEvent: _handleKeyEvent,
+        autofocus: true,
+        child: Stack(
+          children: [
+            PageView.builder(
+              controller: _pageController,
+              physics: const NeverScrollableScrollPhysics(), // Disabilita lo swipe su mobile per mantenere l'effetto slide click/key
+              onPageChanged: (index) {
+                setState(() {
+                  _currentPage = index;
+                });
+              },
+              itemCount: _slides.length,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: _nextSlide,
+                  child: Container(
+                    color: Colors.black,
+                    child: Center(
+                      child: AspectRatio(
+                        aspectRatio: 16 / 9,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1E1E2C),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.black87,
+                                blurRadius: 20,
+                                spreadRadius: 5,
+                              )
+                            ],
+                          ),
+                          padding: const EdgeInsets.all(60.0),
+                          child: _slides[index],
+                        ),
                       ),
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.arrow_forward_ios),
-                      onPressed: _currentPage < _slides.length - 1 ? _nextSlide : null,
-                      color: _currentPage < _slides.length - 1 ? Colors.black54 : Colors.black12,
-                    ),
-                  ],
-                ),
+                  ),
+                );
+              },
+            ),
+            
+            // Indicatori e controlli in basso (discreti)
+            Positioned(
+              bottom: 20,
+              left: 20,
+              right: 20,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back_ios, color: Colors.white30),
+                    onPressed: _currentPage > 0 ? _prevSlide : null,
+                  ),
+                  Text(
+                    '${_currentPage + 1} / ${_slides.length}',
+                    style: const TextStyle(color: Colors.white30, fontSize: 16),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.arrow_forward_ios, color: Colors.white30),
+                    onPressed: _currentPage < _slides.length - 1 ? _nextSlide : null,
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-enum SlideType { title, bullet }
+// --- SLIDE WIDGETS ---
 
-class SlideContent {
-  final String title;
-  final String body;
-  final SlideType type;
-
-  SlideContent({
-    required this.title,
-    required this.body,
-    required this.type,
-  });
-}
-
-class SlideWidget extends StatelessWidget {
-  final SlideContent slide;
-
-  const SlideWidget({super.key, required this.slide});
+class TitleSlide extends StatelessWidget {
+  const TitleSlide({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        bool isMobile = constraints.maxWidth < 600;
-        
-        return Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: isMobile ? 24.0 : constraints.maxWidth * 0.15,
-            vertical: 40.0,
-          ),
-          child: slide.type == SlideType.title
-              ? _buildTitleSlide(isMobile)
-              : _buildBulletSlide(isMobile),
-        );
-      },
-    );
-  }
-
-  Widget _buildTitleSlide(bool isMobile) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        Icon(Icons.campaign, size: 100, color: Theme.of(context).colorScheme.primary),
+        const SizedBox(height: 30),
         Text(
-          slide.title,
+          'Marketing & Social Media',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: isMobile ? 32 : 56,
-            fontWeight: FontWeight.bold,
-            color: const Color(0xFF1E293B),
-            height: 1.2,
-          ),
+          style: Theme.of(context).textTheme.displayLarge,
         ),
-        const SizedBox(height: 32),
+        const SizedBox(height: 20),
         Text(
-          slide.body,
+          'Dalla pubblicità tradizionale all\\'era dell\\'Intelligenza Artificiale',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: isMobile ? 18 : 28,
-            color: const Color(0xFF64748B),
-            height: 1.5,
+          style: Theme.of(context).textTheme.displayMedium,
+        ),
+      ],
+    );
+  }
+}
+
+class IntroSlide extends StatelessWidget {
+  const IntroSlide({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('La Pubblicità nei Social Media', style: Theme.of(context).textTheme.displayLarge),
+        const SizedBox(height: 40),
+        Text('• Non si tratta più solo di vendere, ma di intrattenere e creare community.', style: Theme.of(context).textTheme.bodyLarge),
+        const SizedBox(height: 20),
+        Text('• Attenzione dell\\'utente ridotta: i primi 3 secondi sono fondamentali.', style: Theme.of(context).textTheme.bodyLarge),
+        const SizedBox(height: 20),
+        Text('• Targeting avanzato: i social sanno cosa vogliamo prima di noi.', style: Theme.of(context).textTheme.bodyLarge),
+        const SizedBox(height: 40),
+        Container(
+          height: 200,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.white10,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: const Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.play_circle_outline, size: 50, color: Colors.white54),
+                SizedBox(width: 15),
+                Text('Placeholder: Video "L\\'Evoluzione dell\\'Ad"', style: TextStyle(color: Colors.white54, fontSize: 20)),
+              ],
+            ),
           ),
         ),
       ],
     );
   }
+}
 
-  Widget _buildBulletSlide(bool isMobile) {
+class PlatformSlide extends StatelessWidget {
+  final String platform;
+  final String description;
+  final IconData icon;
+  final Color color;
+
+  const PlatformSlide({super.key, required this.platform, required this.description, required this.icon, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Expanded(
+          flex: 1,
+          child: Icon(icon, size: 200, color: color),
+        ),
+        Expanded(
+          flex: 2,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(platform, style: Theme.of(context).textTheme.displayLarge?.copyWith(color: color)),
+              const SizedBox(height: 30),
+              ...description.split('\\n').map((line) => Padding(
+                padding: const EdgeInsets.only(bottom: 20.0),
+                child: Text('• $line', style: Theme.of(context).textTheme.bodyLarge),
+              )),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class AISlide extends StatelessWidget {
+  const AISlide({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          slide.title,
-          style: TextStyle(
-            fontSize: isMobile ? 28 : 48,
-            fontWeight: FontWeight.bold,
-            color: const Color(0xFF1E293B),
+        Text('L\\'Intelligenza Artificiale nel Marketing', style: Theme.of(context).textTheme.displayLarge),
+        const SizedBox(height: 40),
+        Text('Come l\\'AI sta cambiando le regole del gioco:', style: Theme.of(context).textTheme.headlineMedium),
+        const SizedBox(height: 30),
+        Text('1. Generazione di copy e asset visivi (Midjourney, DALL-E).', style: Theme.of(context).textTheme.bodyLarge),
+        const SizedBox(height: 15),
+        Text('2. Ottimizzazione delle campagne in tempo reale.', style: Theme.of(context).textTheme.bodyLarge),
+        const SizedBox(height: 15),
+        Text('3. Personalizzazione estrema dell\\'esperienza utente.', style: Theme.of(context).textTheme.bodyLarge),
+      ],
+    );
+  }
+}
+
+class VirtualModelSlide extends StatelessWidget {
+  const VirtualModelSlide({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          flex: 2,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('I Modelli Virtuali (AI Influencers)', style: Theme.of(context).textTheme.displayLarge),
+              const SizedBox(height: 30),
+              Text('• Cosa sono: Avatar generati digitalmente (CGI e AI) che operano come veri influencer.', style: Theme.of(context).textTheme.bodyLarge),
+              const SizedBox(height: 15),
+              Text('• Vantaggi per i Brand: Controllo totale sull\\'immagine, zero scandali, disponibilità 24/7.', style: Theme.of(context).textTheme.bodyLarge),
+              const SizedBox(height: 15),
+              Text('• Case Study: Aitana Lopez (agenzia The Clueless) guadagna migliaia di euro al mese come modella virtuale su Instagram.', style: Theme.of(context).textTheme.bodyLarge),
+            ],
           ),
         ),
-        const SizedBox(height: 40),
         Expanded(
-          child: SingleChildScrollView(
-            child: Text(
-              slide.body,
-              style: TextStyle(
-                fontSize: isMobile ? 18 : 26,
-                color: const Color(0xFF334155),
-                height: 1.8,
+          flex: 1,
+          child: Container(
+            margin: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white10,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.smart_toy, size: 80, color: Colors.purpleAccent),
+                  SizedBox(height: 10),
+                  Text('Placeholder: Foto Modello AI', style: TextStyle(color: Colors.white54)),
+                ],
               ),
             ),
           ),
         ),
+      ],
+    );
+  }
+}
+
+class AnecdoteSlide extends StatelessWidget {
+  const AnecdoteSlide({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Aneddoti & Curiosità', style: Theme.of(context).textTheme.displayLarge),
+        const SizedBox(height: 40),
+        Container(
+          padding: const EdgeInsets.all(30),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.orangeAccent, width: 2),
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Lo sapevi che...', style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: Colors.orangeAccent)),
+              const SizedBox(height: 20),
+              Text('Lil Miquela, una delle prime virtual influencer, è stata inserita dal Time tra le 25 persone più influenti del web. Molti dei suoi follower inizialmente credevano fosse una persona reale, innescando un enorme dibattito sull\\'autenticità sui social media.', style: Theme.of(context).textTheme.bodyLarge),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class ConclusionSlide extends StatelessWidget {
+  const ConclusionSlide({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text('Grazie per l\\'attenzione!', style: Theme.of(context).textTheme.displayLarge),
+        const SizedBox(height: 30),
+        Text('Domande?', style: Theme.of(context).textTheme.displayMedium),
+        const SizedBox(height: 60),
+        const Icon(Icons.forum, size: 100, color: Colors.blueAccent),
       ],
     );
   }
